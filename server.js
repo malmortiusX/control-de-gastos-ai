@@ -1,13 +1,14 @@
 
-const express = require('express');
-const mysql = require('mysql2/promise');
-const cors = require('cors');
+import express, { json } from 'express';
+import { createConnection, createPool } from 'mysql2/promise';
+import cors from 'cors';
+
 const app = express();
 const port = 3001;
 
 // Configuración de Middlewares
 app.use(cors());
-app.use(express.json());
+app.use(json());
 
 // Configuración de la conexión MySQL
 // Ajusta estos valores según tu entorno
@@ -23,7 +24,7 @@ let pool;
 async function initDb() {
   try {
     // Primero conectamos sin base de datos para asegurarnos de que exista
-    const connection = await mysql.createConnection({
+    const connection = await createConnection({
       host: dbConfig.host,
       user: dbConfig.user,
       password: dbConfig.password
@@ -32,7 +33,7 @@ async function initDb() {
     await connection.end();
 
     // Creamos el pool de conexiones con la base de datos ya seleccionada
-    pool = mysql.createPool(dbConfig);
+    pool = createPool(dbConfig);
 
     // Crear tablas si no existen
     await pool.execute(`
