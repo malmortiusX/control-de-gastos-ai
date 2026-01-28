@@ -1,4 +1,4 @@
-
+import 'dotenv/config';
 import express, { json } from 'express';
 import { createConnection, createPool } from 'mysql2/promise';
 import cors from 'cors';
@@ -13,10 +13,10 @@ app.use(json());
 // Configuración de la conexión MySQL
 // Ajusta estos valores según tu entorno
 const dbConfig = {
-  host: 'localhost',
-  user: 'root',
-  password: '', // Tu contraseña de MySQL
-  database: 'gastowise'
+  host: process.env.DB_SERVER, 
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 };
 
 let pool;
