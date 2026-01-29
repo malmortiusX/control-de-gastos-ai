@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express, { json } from 'express';
+import express from 'express';
 import { createConnection, createPool } from 'mysql2/promise';
 import cors from 'cors';
 import path from 'path';
@@ -9,7 +9,8 @@ const app = express();
 
 // Configuración de Middlewares
 app.use(cors());
-app.use(json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Configuración de la conexión MySQL
 // Ajusta estos valores según tu entorno
@@ -149,6 +150,7 @@ app.delete('/api/expenses/:id', async (req, res) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distPath = path.join(__dirname, 'dist');
+
 app.use(express.static(distPath));
 
 app.use((req, res) => {
