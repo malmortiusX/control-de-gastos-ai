@@ -65,8 +65,6 @@ async function initDb() {
   }
 }
 
-initDb();
-
 // --- ENDPOINTS PARA CATEGORÍAS ---
 
 app.get('/api/categories', async (req, res) => {
@@ -161,10 +159,17 @@ app.use((req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, '0.0.0.0', () => {
+
+async function startServer() {
+  await initDb(); // ⬅️ ESPERAR A MYSQL
+
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`
 ✅ Servidor Activo
 🚀 Puerto: ${PORT}
 📂 Directorio: ${__dirname}
     `);
-});
+  });
+}
+
+startServer();
