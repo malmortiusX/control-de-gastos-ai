@@ -1,8 +1,7 @@
-
 import { Expense, Category } from '../types';
 import { DEFAULT_CATEGORIES } from '../constants';
 
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = '/api';
 const LOCAL_EXPENSES_KEY = 'gastowise_expenses_fallback';
 const LOCAL_CATEGORIES_KEY = 'gastowise_categories_fallback';
 
