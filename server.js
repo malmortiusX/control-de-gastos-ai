@@ -2,6 +2,8 @@ import 'dotenv/config';
 import express, { json } from 'express';
 import { createConnection, createPool } from 'mysql2/promise';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 const port = 3001;
