@@ -7,6 +7,7 @@ import ExpenseList from './components/ExpenseList';
 import Dashboard from './components/Dashboard';
 import AIInsights from './components/AIInsights';
 import CategoryManager from './components/CategoryManager';
+import { generateUUID } from './utils/uuid';
 
 const App: React.FC = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -36,7 +37,11 @@ const App: React.FC = () => {
   }, []);
 
   const addExpense = async (newExp: Omit<Expense, 'id'>) => {
-    const expense: Expense = { ...newExp, id: crypto.randomUUID() };
+    const expense: Expense = {
+      ...newExp,
+      id: generateUUID(),
+    };
+
     await dbService.addExpense(expense);
     setExpenses(prev => [expense, ...prev]);
   };
@@ -82,11 +87,10 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
-          <button 
+          <button
             onClick={() => setShowConfig(!showConfig)}
-            className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all transform active:scale-95 ${
-              showConfig ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
+            className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all transform active:scale-95 ${showConfig ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
           >
             {showConfig ? '← Dashboard' : '⚙️ Ajustes'}
           </button>
