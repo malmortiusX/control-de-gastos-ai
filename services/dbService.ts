@@ -59,6 +59,7 @@ export const dbService = {
 
   async addExpense(expense: Expense): Promise<void> {
     try {
+      console.log('Enviando gasto al API:', expense);
       await fetch(`${API_BASE}/expenses`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
