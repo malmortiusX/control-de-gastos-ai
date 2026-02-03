@@ -10,10 +10,10 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ expenses, categories }) => {
-  const totalAmount = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+  const totalAmount = expenses.reduce((sum, exp) => sum + Number(exp.amount), 0);
 
   const categorySummary = expenses.reduce((acc, exp) => {
-    acc[exp.categoryName] = (acc[exp.categoryName] || 0) + exp.amount;
+    acc[exp.categoryName] = (acc[exp.categoryName] || 0) + Number(exp.amount);
     return acc;
   }, {} as Record<string, number>);
 
@@ -27,7 +27,7 @@ const Dashboard: React.FC<DashboardProps> = ({ expenses, categories }) => {
     const dateStr = d.toISOString().split('T')[0];
     const amount = expenses
       .filter(exp => exp.date === dateStr)
-      .reduce((sum, exp) => sum + exp.amount, 0);
+      .reduce((sum, exp) => sum + Number(exp.amount), 0);
     return { 
       date: dateStr.split('-').reverse().slice(0, 2).join('/'), 
       amount 
@@ -39,15 +39,15 @@ const Dashboard: React.FC<DashboardProps> = ({ expenses, categories }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-6 rounded-2xl shadow-lg text-white">
           <p className="text-indigo-100 text-sm font-medium">Inversión Total</p>
-          <h2 className="text-3xl font-bold mt-1">{totalAmount.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}</h2>
+          <h2 className="text-3xl font-bold mt-1">{totalAmount.toLocaleString('es-ES', { style: 'currency', currency: 'COP' })}</h2>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
           <p className="text-slate-500 text-sm font-medium">Este Mes</p>
           <h2 className="text-2xl font-bold text-slate-800 mt-1">
              {expenses
                .filter(e => e.date.startsWith(new Date().toISOString().slice(0, 7)))
-               .reduce((s, e) => s + e.amount, 0)
-               .toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}
+               .reduce((s, e) => s + Number(e.amount), 0)
+               .toLocaleString('es-ES', { style: 'currency', currency: 'COP' })}
           </h2>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -80,7 +80,7 @@ const Dashboard: React.FC<DashboardProps> = ({ expenses, categories }) => {
                   {pieData.length === 0 && <Cell fill="#f1f5f9" stroke="none" />}
                 </Pie>
                 <Tooltip 
-                  formatter={(v: any) => typeof v === 'number' ? `${v.toFixed(2)}€` : v}
+                  formatter={(v: any) => typeof v === 'number' ? `${v.toFixed(2)}$` : v}
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
                 />
                 <Legend verticalAlign="bottom" iconType="circle" wrapperStyle={{ fontSize: '11px', fontWeight: '600' }} />
