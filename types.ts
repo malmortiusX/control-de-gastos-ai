@@ -20,3 +20,36 @@ export interface SpendingInsight {
   description: string;
   type: 'saving' | 'warning' | 'info';
 }
+
+export interface Family {
+  id: string;
+  name: string;
+}
+
+export interface User {
+  id: string;
+  username: string;
+  familyId: string;
+  familyName: string;
+}
+
+export interface AuthSession {
+  token: string;
+  user: User;
+}
+
+export interface FamilyDetail {
+  id: string;
+  name: string;
+  created_at: string;
+  userCount: number;
+  expenseCount: number;
+}
+
+export interface UserDetail {
+  id: string;
+  username: string;
+  family_id: string;
+  familyName: string;
+  created_at: string;
+}
