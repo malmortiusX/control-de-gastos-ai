@@ -12,7 +12,14 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ categories, onAddExpense }) =
   const [categoryId, setCategoryId] = useState('');
   const [subCategory, setSubCategory] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(() => {
+    const d = new Date();
+    return [
+      d.getFullYear(),
+      String(d.getMonth() + 1).padStart(2, '0'),
+      String(d.getDate()).padStart(2, '0')
+    ].join('-');
+  });
 
   // Reset subcategory when category changes
   useEffect(() => {
