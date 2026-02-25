@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Expense, SpendingInsight } from '../types';
 import { getFinancialInsights } from '../services/geminiService';
 
@@ -18,13 +18,6 @@ const AIInsights: React.FC<AIInsightsProps> = ({ expenses }) => {
     setInsights(data);
     setLoading(false);
   };
-
-  useEffect(() => {
-    if (expenses.length >= 3 && expenses.length % 3 === 0) { // Fetch periodically
-      fetchInsights();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expenses.length]);
 
   if (expenses.length < 3) {
     return (

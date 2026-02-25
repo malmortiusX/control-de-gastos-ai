@@ -24,11 +24,10 @@ export const getFinancialInsights = async (expenses: Expense[]): Promise<Spendin
       headers,
       body: JSON.stringify({ expenses }),
     });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      throw new Error(body.error || `HTTP ${res.status}`);
-    }
     const data = await res.json();
+    if (!res.ok && !data.insights) {
+      throw new Error(data.error || `HTTP ${res.status}`);
+    }
     return data.insights || [];
   } catch (error) {
     console.error('Error fetching insights:', error);

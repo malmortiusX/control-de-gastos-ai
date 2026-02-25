@@ -544,7 +544,7 @@ ${expensesSummary}
 Devuelve la respuesta en formato JSON con una lista de objetos que tengan 'title', 'description' y 'type' (saving, warning, info).`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.5-flash-preview-04-17',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
@@ -573,8 +573,17 @@ Devuelve la respuesta en formato JSON con una lista de objetos que tengan 'title
     const data = JSON.parse(jsonStr);
     res.json({ insights: data.insights || [] });
   } catch (error) {
-    console.error('Error llamando a Gemini API:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Error llamando a Gemini API:', error.message);
+    const isQuotaError = error.message?.includes('429') || error.message?.includes('RESOURCE_EXHAUSTED');
+    res.status(isQuotaError ? 429 : 500).json({
+      insights: [{
+        title: isQuotaError ? 'Límite de IA alcanzado' : 'IA no disponible',
+        description: isQuotaError
+          ? 'Se alcanzó el límite de consultas gratuitas de Gemini. Intenta más tarde.'
+          : 'No pudimos conectar con el analista inteligente en este momento.',
+        type: 'info'
+      }]
+    });
   }
 });
 
