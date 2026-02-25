@@ -6,7 +6,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import { promisify } from 'util';
-import { GoogleGenAI, Type } from '@google/genai';
 
 const app = express();
 
@@ -533,6 +532,7 @@ app.post('/api/ai/insights', authMiddleware, async (req, res) => {
   }
 
   try {
+    const { GoogleGenAI, Type } = await import('@google/genai');
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const expensesSummary = expenses
       .map(e => `${e.date}: ${e.amount} en ${e.categoryName} (${e.description})`)
