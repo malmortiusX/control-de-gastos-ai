@@ -6,6 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import { promisify } from 'util';
+import { GoogleGenAI, Type } from '@google/genai';
 
 const app = express();
 
@@ -513,6 +514,67 @@ app.delete('/api/admin/users/:id', authMiddleware, async (req, res) => {
     res.json({ message: 'Usuario eliminado' });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// ─────────────────────────────────────────────
+//  ENDPOINT IA: Análisis de gastos (protegido)
+// ─────────────────────────────────────────────
+
+app.post('/api/ai/insights', authMiddleware, async (req, res) => {
+  const { expenses } = req.body;
+  if (!expenses || !Array.isArray(expenses) || expenses.length === 0) {
+    return res.json({ insights: [] });
+  }
+  try {
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const expensesSummary = expenses
+      .map(e => `${e.date}: ${e.amount} en ${e.categoryName} (${e.description})`)
+      .join('\n');
+    const prompt = `Analiza los siguientes gastos personales y proporciona 3 consejos o insights financieros útiles.
+Gastos:
+${expensesSummary}
+
+Devuelve la respuesta en formato JSON con una lista de objetos que tengan 'title', 'description' y 'type' (saving, warning, info).`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            insights: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  title: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                  type: { type: Type.STRING }
+                },
+                required: ['title', 'description', 'type']
+              }
+            }
+          },
+          required: ['insights']
+        }
+      }
+    });
+
+    const jsonStr = response.text?.trim() || '{"insights":[]}';
+    const data = JSON.parse(jsonStr);
+    res.json({ insights: data.insights || [] });
+  } catch (error) {
+    console.error('Error llamando a Gemini API:', error.message);
+    res.status(500).json({
+      insights: [{
+        title: 'IA no disponible',
+        description: 'No pudimos conectar con el analista inteligente en este momento.',
+        type: 'info'
+      }]
+    });
   }
 });
 
