@@ -24,7 +24,10 @@ export const getFinancialInsights = async (expenses: Expense[]): Promise<Spendin
       headers,
       body: JSON.stringify({ expenses }),
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || `HTTP ${res.status}`);
+    }
     const data = await res.json();
     return data.insights || [];
   } catch (error) {

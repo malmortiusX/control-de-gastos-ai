@@ -526,6 +526,12 @@ app.post('/api/ai/insights', authMiddleware, async (req, res) => {
   if (!expenses || !Array.isArray(expenses) || expenses.length === 0) {
     return res.json({ insights: [] });
   }
+
+  if (!process.env.GEMINI_API_KEY) {
+    console.error('Error: GEMINI_API_KEY no está definida en las variables de entorno');
+    return res.status(500).json({ error: 'GEMINI_API_KEY no configurada en el servidor' });
+  }
+
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const expensesSummary = expenses
@@ -567,14 +573,8 @@ Devuelve la respuesta en formato JSON con una lista de objetos que tengan 'title
     const data = JSON.parse(jsonStr);
     res.json({ insights: data.insights || [] });
   } catch (error) {
-    console.error('Error llamando a Gemini API:', error.message);
-    res.status(500).json({
-      insights: [{
-        title: 'IA no disponible',
-        description: 'No pudimos conectar con el analista inteligente en este momento.',
-        type: 'info'
-      }]
-    });
+    console.error('Error llamando a Gemini API:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
