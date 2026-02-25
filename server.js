@@ -532,7 +532,7 @@ app.post('/api/ai/insights', authMiddleware, async (req, res) => {
   }
 
   try {
-    const { GoogleGenAI, Type } = await import('@google/genai');
+    const { GoogleGenAI } = await import('@google/genai');
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const expensesSummary = expenses
       .map(e => `${e.date}: ${e.amount} en ${e.categoryName} (${e.description})`)
@@ -548,29 +548,16 @@ Devuelve la respuesta en formato JSON con una lista de objetos que tengan 'title
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            insights: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  title: { type: Type.STRING },
-                  description: { type: Type.STRING },
-                  type: { type: Type.STRING }
-                },
-                required: ['title', 'description', 'type']
-              }
-            }
-          },
-          required: ['insights']
-        }
       }
     });
 
     const jsonStr = response.text?.trim() || '{"insights":[]}';
-    const data = JSON.parse(jsonStr);
+    let data;
+    try {
+      data = JSON.parse(jsonStr);
+    } catch {
+      data = { insights: [] };
+    }
     res.json({ insights: data.insights || [] });
   } catch (error) {
     console.error('Error llamando a Gemini API:', error.message);

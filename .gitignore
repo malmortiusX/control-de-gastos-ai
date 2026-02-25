@@ -27,3 +27,4 @@ dist-ssr
 *.sw?
 vite.config.ts
 services/dbService.ts
+.env
